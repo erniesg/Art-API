@@ -1,5 +1,5 @@
 # Data analysis
-- Document here the project: art_api
+- Document here the project: art-api
 - Description: Project Description
 - Data Source:
 - Type of analysis:
@@ -22,14 +22,14 @@ Unittest test:
 make clean install test
 ```
 
-Check for art_api in github.com/{group}. If your project is not set please add it:
+Check for art-api in github.com/{group}. If your project is not set please add it:
 
-Create a new project on github.com/{group}/art_api
+Create a new project on github.com/{group}/art-api
 Then populate it:
 
 ```bash
-##   e.g. if group is "{group}" and project_name is "art_api"
-git remote add origin git@github.com:{group}/art_api.git
+##   e.g. if group is "{group}" and project_name is "art-api"
+git remote add origin git@github.com:{group}/art-api.git
 git push -u origin master
 git push -u origin --tags
 ```
@@ -40,12 +40,12 @@ Functionnal test with a script:
 cd
 mkdir tmp
 cd tmp
-art_api-run
+art-api-run
 ```
 
 # Install
 
-Go to `https://github.com/{group}/art_api` to see the project, manage issues,
+Go to `https://github.com/{group}/art-api` to see the project, manage issues,
 setup you ssh public key, ...
 
 Create a python3 virtualenv and activate it:
@@ -58,8 +58,8 @@ deactivate; virtualenv -ppython3 ~/venv ; source ~/venv/bin/activate
 Clone the project and install it:
 
 ```bash
-git clone git@github.com:{group}/art_api.git
-cd art_api
+git clone git@github.com:{group}/art-api.git
+cd art-api
 pip install -r requirements.txt
 make clean install test                # install and test
 ```
@@ -69,5 +69,5 @@ Functionnal test with a script:
 cd
 mkdir tmp
 cd tmp
-art_api-run
+art-api-run
 ```
