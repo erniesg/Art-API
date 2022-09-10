@@ -1,8 +1,8 @@
 # project id - replace with your GCP project id
-PROJECT_ID=art-api-361815
+PROJECT_ID=art_api-361815
 
 # bucket name - replace with your GCP bucket name
-BUCKET_NAME=art-api
+BUCKET_NAME=art_api
 
 # choose your region from https://cloud.google.com/storage/docs/locations#available_locations
 REGION=ASIA-SOUTHEAST1
@@ -15,7 +15,7 @@ create_bucket:
 
 # path to the file to upload to GCP (the path to the file should be absolute or should match the directory where the make command is ran)
 # replace with your local path to the `train_1k.csv` and make sure to put the path between quotes
-LOCAL_PATH="/home/erniesg/code/erniesg/art-api/raw_data"
+LOCAL_PATH="/home/erniesg/code/erniesg/art_api/raw_data"
 
 # bucket directory in which to store the uploaded file (`data` is an arbitrary name that we choose to use)
 BUCKET_FOLDER=data
@@ -35,10 +35,10 @@ install_requirements:
 	@pip install -r requirements.txt
 
 check_code:
-	@flake8 scripts/* art-api/*.py
+	@flake8 scripts/* art_api/*.py
 
 black:
-	@black scripts/* art-api/*.py
+	@black scripts/* art_api/*.py
 
 test:
 	@coverage run -m pytest tests/*.py
@@ -52,8 +52,8 @@ clean:
 	@rm -f .coverage
 	@rm -fr */__pycache__ */*.pyc __pycache__
 	@rm -fr build dist
-	@rm -fr art-api-*.dist-info
-	@rm -fr art-api.egg-info
+	@rm -fr art_api-*.dist-info
+	@rm -fr art_api.egg-info
 
 install:
 	@pip install . -U
