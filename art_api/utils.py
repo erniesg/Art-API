@@ -12,15 +12,26 @@ import numpy as np
 import tensorflow as tf
 from art_api import config
 
-def load_data():
-    
+def resize_rescale():
     imgs = []
     df = pd.read_csv(config.PATH_FILE)
     
     for index, row in df.iterrows():
         img_file = str(row["filename"])
-        image = Image.open(os.path.join(config.PATH_YOURPAINTINGS_SM, img_file))   
-        imgs.append(np.array(image))
+        image = Image.open(os.path.join(config.PATH_YOURPAINTINGS, img_file))
+        image = image.resize((256, 256), Image.ANTIALIAS)
+        image.save(os.path.join(config.PATH_YOURPAINTINGS_SM, img_file))
+        #imgs.append(np.array(image/255))
+    return imgs, df
+
+def load_data():
+    
+    imgs, df = resize_rescale()
+    
+    for index, row in df.iterrows():
+        #img_file = str(row["filename"])
+        #image = Image.open(os.path.join(config.PATH_YOURPAINTINGS_SM, img_file))   
+        #imgs.append(np.array(image))
         X = np.array(imgs)
         X.shape
         y = df.drop(columns=['Image URL', 'Web page URL', 'Subset', 'Labels', 'filename', 'labels'])
