@@ -12,9 +12,14 @@ import numpy as np
 import tensorflow as tf
 from art_api import config
 
-def resize_rescale():
+def init():
     imgs = []
-    df = pd.read_csv(config.PATH_FILE)
+    df = pd.read_csv(f"gs://{config.BUCKET_NAME}/{config.BUCKET_TRAIN_DATA_PATH}/{config.BUCKET_TRAIN_DATA_FILE}")
+    return imgs, df
+
+def resize_rescale(df):
+    '''download images and resize to 256x256 if not already in local disk'''
+#    df = pd.read_csv(config.PATH_FILE)
     
     for index, row in df.iterrows():
         img_file = str(row["filename"])
@@ -24,15 +29,15 @@ def resize_rescale():
         #imgs.append(np.array(image/255))
     return imgs, df
 
-def load_data():
-    
-    imgs, df = resize_rescale()
-    
+def load_data(df):
+    '''generates X and y'''
+    '''read from disk or read from cloud <--- to be implemented'''
     for index, row in df.iterrows():
-        #img_file = str(row["filename"])
-        #image = Image.open(os.path.join(config.PATH_YOURPAINTINGS_SM, img_file))   
-        #imgs.append(np.array(image))
+        img_file = str(row["filename"])
+        image = Image.open(os.path.join(config.PATH_YOURPAINTINGS_SM, img_file))   
+        imgs.append(np.array(image))
         X = np.array(imgs)
         X.shape
-        y = df.drop(columns=['Image URL', 'Web page URL', 'Subset', 'Labels', 'filename', 'labels'])
+        y = df.drop(columns=['index', 'Image URL', 'Web page URL', 'Subset', 'Labels', 'filename', 'labels'])
+        y.shape
     return X, y

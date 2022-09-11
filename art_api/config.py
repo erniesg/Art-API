@@ -1,8 +1,9 @@
 from pathlib import Path  
 
-BUCKET_NAME = 'art_api-sg'
+BUCKET_NAME = 'art-api'
 #BUCKET_TRAIN_DATA_PATH = 'data/train_1k.csv'
-BUCKET_TRAIN_DATA_PATH = 'yourpaintings'
+BUCKET_TRAIN_DATA_PATH = 'data/raw_data'
+BUCKET_TRAIN_DATA_FILE = 'df_yourpaintings.csv'
 PATH = Path("../raw_data")
 PATH_YOURPAINTINGS = PATH/"yourpaintings"
 PATH_YOURPAINTINGS_SM = PATH/"yourpaintings_sm"
