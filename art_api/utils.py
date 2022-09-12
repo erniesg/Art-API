@@ -41,3 +41,22 @@ def load_data(df):
         y = df.drop(columns=['index', 'Image URL', 'Web page URL', 'Subset', 'Labels', 'filename', 'labels'])
         y.shape
     return X, y
+
+def get_classes_df():
+    undersample_num = y.sum().min()
+    print(f"Minimum number of samples to take is {undersample_num}.")
+    classes = ['aeroplane', 'bird', 'boat', 'chair', 'cow', 'diningtable', 'dog', 'horse', 'sheep', 'train']
+    df_aeroplane, df_bird, df_boat, df_chair, df_cow, df_diningtable, df_dog, df_horse, df_sheep, df_train = [y_sub[y_sub[cls] == 1] for cls in classes]
+    return df_aeroplane, df_bird, df_boat, df_chair, df_cow, df_diningtable, df_dog, df_horse, df_sheep, df_train
+
+def undersample(n, cls_df):
+    '''This function will undersample all other classes based on the minority class
+    n = number of samples to obtain
+    X = class df, containing images from only 1 class
+    y = target df
+    '''
+    cls_df = cls_df.sample(n)
+    cls_X = X[cls_df.index]
+    print(cls_df.index)
+
+    return cls_df, cls_X

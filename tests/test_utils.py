@@ -10,4 +10,4 @@ def test_init():
     
 def test_load_data():
     X, y = load_data(df)
-    assert X.shape[1] == y.shape[1]
+    assert X.shape[0] == y.shape[0]
