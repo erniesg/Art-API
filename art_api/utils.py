@@ -11,6 +11,7 @@ from PIL import Image
 import numpy as np
 import tensorflow as tf
 from art_api import config
+from google_images_download import google_images_download
 
 def init():
     imgs = []
@@ -60,3 +61,19 @@ def undersample(n, cls_df):
     print(cls_df.index)
 
     return cls_df, cls_X
+
+def download_google_images():
+    response = google_images_download.googleimagesdownload()   #class instantiation
+
+    arguments = {"keywords":"Polar bears,baloons,Beaches","limit":20,"print_urls":True}   #creating list of arguments
+    paths = response.download(arguments)   #passing the arguments to the function
+    print(paths)   #printing absolute paths of the downloaded images
+    
+    img_dir = r"path/to/downloads/directory"
+for filename in os.listdir(img_dir):
+    try :
+        with Image.open(img_dir + "/" + filename) as im:
+             print('ok')
+    except :
+        print(img_dir + "/" + filename)
+        os.remove(img_dir + "/" + filename)
