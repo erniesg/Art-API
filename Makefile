@@ -26,7 +26,8 @@ BUCKET_FOLDER=data
 upload_data:
     # @gsutil cp train_1k.csv gs://wagon-ml-my-bucket-name/data/train_1k.csv
 #	@gsutil -m cp -r ${LOCAL_PATH} gs://${BUCKET_NAME}/${BUCKET_FOLDER}/${BUCKET_FILE_NAME}
-	@gsutil -m cp -r ${LOCAL_PATH} gs://${BUCKET_NAME}/${BUCKET_FOLDER}
+#	@gsutil -m cp -r ${LOCAL_PATH} gs://${BUCKET_NAME}/${BUCKET_FOLDER}
+	@gsutil -m rsync -r ${LOCAL_PATH} gs://${BUCKET_NAME}/${BUCKET_FOLDER}
 
 # ----------------------------------
 #          INSTALL & TEST

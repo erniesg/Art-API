@@ -5,8 +5,11 @@ BUCKET_NAME = 'art-api'
 BUCKET_TRAIN_DATA_PATH = 'data/raw_data'
 BUCKET_TRAIN_DATA_FILE = 'df_yourpaintings.csv'
 PATH = Path("../raw_data")
+PATH_MODELS = Path("../models")
 PATH_YOURPAINTINGS = PATH/"yourpaintings"
 PATH_YOURPAINTINGS_SM = PATH/"yourpaintings_sm"
+PATH_GOOGLE = PATH/"google"
+PATH_GOOGLE_SM = PATH/"google_sm"
 MODEL_NAME = 'art_api'
 MODEL_VERSION = 'baseline'
 PATH_FILE = Path(PATH_YOURPAINTINGS/"df_yourpaintings.csv")  
@@ -23,4 +26,4 @@ PATH_BING = PATH/"bing"
 import os
 
 # Set environment variables
-os.environ['API_PASSWORD'] = '5268e5e33b2e615dae8f035b9de98a36756960f693d80baa022c54d757cdf947'
+os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = '/home/erniesg/secrets/art-api-361815-5a390ae75860.json'
