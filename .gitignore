@@ -1,0 +1,17 @@
+*.egg-info
+.coverage
+.ipynb_checkpoints
+.DS_Store
+raw_data/
+data_/
+**/wand/
+*.csv
+*wand
+*wand/
+**wand/
+**/wand/*
+**wand/*
+**/wand
+**/__pycache__/
+models/
+.env
