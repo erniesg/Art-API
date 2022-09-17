@@ -11,10 +11,10 @@ from PIL import Image
 import numpy as np
 import tensorflow as tf
 from art_api import config
-from google_images_download import google_images_download
 
 def init():
     imgs = []
+#    df = pd.read_csv
     df = pd.read_csv(f"gs://{config.BUCKET_NAME}/{config.BUCKET_TRAIN_DATA_PATH}/{config.BUCKET_TRAIN_DATA_FILE}")
     return imgs, df
 
