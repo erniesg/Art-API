@@ -18,6 +18,7 @@ TARGET_SIZE = (256, 256)
 INTERPOLATION = "bilinear"
 CLASSES = ["aeroplane", "bird", "boat", "chair", "cow", "diningtable", "dog", "horse", "sheep", "train"]
 PATH_BING = PATH/"bing"
+PATH_USERS = "../raw_data/users"
 
 #AUTO = tf.data.AUTOTUNE
 #BATCH_SIZE = 64
