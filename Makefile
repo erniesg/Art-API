@@ -29,6 +29,9 @@ upload_data:
 #	@gsutil -m cp -r ${LOCAL_PATH} gs://${BUCKET_NAME}/${BUCKET_FOLDER}
 	@gsutil -m rsync -r ${LOCAL_PATH} gs://${BUCKET_NAME}/${BUCKET_FOLDER}
 
+run_api:
+	uvicorn api.fast:app --reload
+
 # ----------------------------------
 #          INSTALL & TEST
 # ----------------------------------
