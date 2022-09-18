@@ -18,26 +18,25 @@ def init():
     df = pd.read_csv(f"gs://{config.BUCKET_NAME}/{config.BUCKET_TRAIN_DATA_PATH}/{config.BUCKET_TRAIN_DATA_FILE}")
     return imgs, df
 
-def resize_rescale(source):
-    '''Download images and resize to 256x256 if not already in local disk
-    Args:
-        source: df, local, cloud
+def resize(dir, dir_sm):
+    '''Resize image to 256x256 (to be implemented: if not already in local disk)
+    Args: make sure you specify the relative file path,
+    e.g. resize("../raw_data/test", "../raw_data/test_sm")
+        dir: source directory
+        dir_sm: destination directory
     Returns:
+        String output describing number of images resized
     '''
-#    df = pd.read_csv(config.PATH_FILE)
-    if source == "df":
-        for index, row in df.iterrows():
-            img_file = str(row["filename"])
-            image = Image.open(os.path.join(config.PATH_YOURPAINTINGS, img_file))
-            image = image.resize((256, 256), Image.ANTIALIAS)
-            image.save(os.path.join(config.PATH_YOURPAINTINGS_SM, img_file))
-            #imgs.append(np.array(image/255))
-    if source == "path":
-        for file in os.listdir(config.PATH_GOOGLE):
-            image = Image.open(os.path.join(config.PATH_GOOGLE, file))
-            image = image.resize((256, 256), Image.ANTIALIAS)
-            image.save(os.path.join(config.PATH_GOOGLE_SM, file))
-    return "Images resized and rescaled"
+    counter = 0
+    for file in os.listdir(dir):
+        image = Image.open(os.path.join(dir, file))
+        image = image.resize((256, 256), Image.ANTIALIAS)
+        if not os.path.exists(dir_sm):
+            print(f"Directory does not exist. Creating {dir_sm}.")
+            os.makedirs(dir_sm)
+        image.save(os.path.join(dir_sm, file))
+        counter +=1
+    return f"{counter} images resized and rescaled to {dir_sm}"
 
 def load_data():
     '''generates X and y'''

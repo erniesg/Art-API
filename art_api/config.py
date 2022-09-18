@@ -5,6 +5,7 @@ BUCKET_NAME = 'art-api'
 BUCKET_TRAIN_DATA_PATH = 'data/raw_data'
 BUCKET_TRAIN_DATA_FILE = 'df_yourpaintings.csv'
 PATH = Path("../raw_data")
+DF_PATH = Path("../raw_data/df_yourpaintings.csv")
 PATH_MODELS = Path("../models")
 PATH_YOURPAINTINGS = PATH/"yourpaintings"
 PATH_YOURPAINTINGS_SM = PATH/"yourpaintings_sm"
