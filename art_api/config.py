@@ -1,4 +1,6 @@
-from pathlib import Path  
+from pathlib import Path
+import wandb
+from wandb.keras import WandbCallback
 
 BUCKET_NAME = 'art-api'
 #BUCKET_TRAIN_DATA_PATH = 'data/train_1k.csv'
@@ -25,6 +27,47 @@ PATH_USERS = "../raw_data/users"
 #BATCH_SIZE = 64
 #EPOCHS = 5
 
+'''Training parameters below'''
+wandb.config = {
+  "LEARNING_RATE": 0.0001,
+  "N_EPOCHS": 50,
+  "BATCH_SIZE": 32,
+  "DROPOUT_RATE": 0.0,
+  "IM_SIZE": 256,
+  "REGULARIZATION_RATE": 0.0,
+  "N_FILTERS": 6,
+  "KERNEL_SIZE": 3,
+  "N_STRIDES": 1,
+  "POOL_SIZE": 2,
+  "N_DENSE_1": 100,
+  "N_DENSE_2": 10,
+}
+'''
+IM_SIZE = 256
+DROPOUT_RATE = CONFIGURATION['DROPOUT_RATE']
+REGULARIZATION_RATE = CONFIGURATION['REGULARIZATION_RATE']
+N_FILTERS = CONFIGURATION['N_FILTERS']
+KERNEL_SIZE = CONFIGURATION['KERNEL_SIZE']
+POOL_SIZE = CONFIGURATION['POOL_SIZE']
+N_STRIDES = CONFIGURATION['N_STRIDES']
+LEARNING_RATE = 1e-4
+
+wandb.config = {
+  "LEARNING_RATE": 0.001,
+  "N_EPOCHS": 5,
+  "BATCH_SIZE": 128,
+  "DROPOUT_RATE": 0.0,
+  "IM_SIZE": 224,
+  "REGULARIZATION_RATE": 0.0,
+  "N_FILTERS": 6,
+  "KERNEL_SIZE": 3,
+  "N_STRIDES": 1,
+  "POOL_SIZE": 2,
+  "N_DENSE_1": 100,
+  "N_DENSE_2": 10,
+}
+'''
+CONFIGURATION = wandb.config
 import os
 
 # Set environment variables

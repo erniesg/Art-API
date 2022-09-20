@@ -14,7 +14,6 @@ from art_api import config
 
 def init():
     imgs = []
-#    df = pd.read_csv
     df = pd.read_csv(f"gs://{config.BUCKET_NAME}/{config.BUCKET_TRAIN_DATA_PATH}/{config.BUCKET_TRAIN_DATA_FILE}")
     return imgs, df
 
