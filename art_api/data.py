@@ -1,5 +1,8 @@
 # -*- coding: utf-8 -*-
-'''Data Loader'''
+"""Data Loader
+end-to-end: downloading from the web and building dataframe + removing duplicates and exception handling
+to be implemented: visualise number of samples per class
+"""
 
 from art_api import config
 import pandas as pd
@@ -19,6 +22,7 @@ class DataLoader:
     def load_cloud():
         '''Loads dataset from cloud bucket'''
         df = pd.read_csv(f"gs://{config.BUCKET_NAME}/{config.BUCKET_TRAIN_DATA_PATH}/{config.BUCKET_TRAIN_DATA_FILE}")
+        df.drop_duplicates(subset=["filename"], inplace=True)
         return df
     
     '''Methods to add to dataframe with more images of existing class or create new class (to be implemented)'''
