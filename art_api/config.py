@@ -22,10 +22,7 @@ INTERPOLATION = "bilinear"
 CLASSES = ["aeroplane", "bird", "boat", "chair", "cow", "diningtable", "dog", "horse", "sheep", "train"]
 PATH_BING = PATH/"bing"
 PATH_USERS = "../raw_data/users"
-
-#AUTO = tf.data.AUTOTUNE
-#BATCH_SIZE = 64
-#EPOCHS = 5
+IM_SIZE = 256
 
 '''Training parameters below'''
 wandb.config = {
@@ -42,7 +39,12 @@ wandb.config = {
   "N_DENSE_1": 100,
   "N_DENSE_2": 10,
 }
+
 '''
+#AUTO = tf.data.AUTOTUNE
+#BATCH_SIZE = 64
+#EPOCHS = 5
+
 IM_SIZE = 256
 DROPOUT_RATE = CONFIGURATION['DROPOUT_RATE']
 REGULARIZATION_RATE = CONFIGURATION['REGULARIZATION_RATE']

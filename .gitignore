@@ -13,6 +13,7 @@ data_/
 **wand/*
 **/wand
 **/__pycache__/
+notebooks/wandb/
 models/
 *models
 .env

@@ -15,6 +15,7 @@ from art_api import config
 def init():
     imgs = []
     df = pd.read_csv(f"gs://{config.BUCKET_NAME}/{config.BUCKET_TRAIN_DATA_PATH}/{config.BUCKET_TRAIN_DATA_FILE}")
+    df.drop_duplicates(subset=["filename"], inplace=True)
     return imgs, df
 
 def resize(dir, dir_sm):
@@ -37,10 +38,10 @@ def resize(dir, dir_sm):
         counter +=1
     return f"{counter} images resized and rescaled to {dir_sm}"
 
-def load_data():
+def load_data(df):
     '''generates X and y'''
     '''read from disk or read from cloud <--- to be implemented'''
-    imgs, df = init()
+    imgs = []
     for index, row in df.iterrows():
         img_file = str(row["filename"])
         image = Image.open(os.path.join(config.PATH_YOURPAINTINGS_SM, img_file))   

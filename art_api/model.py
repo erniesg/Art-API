@@ -226,3 +226,284 @@ class UNet(BaseModel):
                     "index": 1
                 }
             }
+            
+'''
+feature_extractor_model = Model(func_input, output, name = "Feature_Extractor")
+feature_extractor_model.summary()
+feature_extractor_seq_model = tf.keras.Sequential([
+                             InputLayer(input_shape = (IM_SIZE, IM_SIZE, 3)),
+
+                             Conv2D(filters = 6, kernel_size = 3, strides=1, padding='valid', activation = 'relu'),
+                             BatchNormalization(),
+                             MaxPool2D (pool_size = 2, strides= 2),
+
+                             Conv2D(filters = 16, kernel_size = 3, strides=1, padding='valid', activation = 'relu'),
+                             BatchNormalization(),
+                             MaxPool2D (pool_size = 2, strides= 2),
+
+                             
+
+])
+feature_extractor_seq_model.summary()
+
+func_input = Input(shape = (IM_SIZE, IM_SIZE, 3), name = "Input Image")
+
+x = feature_extractor_seq_model(func_input)
+
+x = Flatten()(x)
+
+x = Dense(100, activation = "relu")(x)
+x = BatchNormalization()(x)
+
+x = Dense(10, activation = "relu")(x)
+x = BatchNormalization()(x)
+
+func_output = Dense(1, activation = "sigmoid")(x)
+
+lenet_model_func = Model(func_input, func_output, name = "Lenet_Model")
+lenet_model_func.summary()
+
+
+class BaseModel(ABC):
+    '''Abstract Model class that is inherited to all models
+    Behaviours:
+    Get X and y
+    Resize, load as array
+    Preprocess input
+    Get_config: hyperparameter tuning
+    Model: baseline, VGG16, VGG19, ResNet, Inception, Xception
+    Unfreeze layer
+    Compile
+    Fit
+    Evaluate: accuracy, losses, classification report, confusion matrix
+    Predict with different thresholds (0.5, mean, median)
+    Save model
+    Df to csv
+    '''
+    def __init__(self, cfg):
+        self.config = config.wandb.config
+
+    @abstractmethod
+    def load_data(self):
+        pass
+
+    @abstractmethod
+    def build(self):
+        """model.compile
+        """
+        pass
+
+    @abstractmethod
+    def train(self):
+        """model.fit
+        """
+        pass
+
+    @abstractmethod
+    def evaluate(self):
+        pass
+    
+    @abstractmethod
+    def predict(self):
+        pass
+
+class BaselineModel(BaseModel):
+    def __init__(self, config):
+       super().__init__(config)
+       self.base_model = tf.keras.applications.MobileNetV2(input_shape=self.config.model.input, include_top=False)
+
+    def load_data(self):
+        # self.X = 
+        # self. y =
+        # self.dataset, self.info = DataLoader().load_data(self.config.data )
+        # self._preprocess_data()
+
+    def build(self):
+        """Builds the Keras model"""
+
+        self.model = tf.keras.Model(inputs=inputs, outputs=x)
+        
+        layer_names = [
+            "base_layer",
+            "flatten_layer",
+            "dense_layer",
+            "prediction_layer",
+        ]
+        layers = [self.base_model.get_layer(name).output for name in layer_names]
+        
+        
+
+    def train(self):
+        self.model.compile(optimizer=self.config.train.optimizer.type,
+                           loss=tf.keras.losses.SparseCategoricalCrossentropy(from_logits=True),
+                           metrics=self.config.train.metrics)
+
+        model_history = self.model.fit(self.train_dataset, epochs=self.epoches,
+                                       steps_per_epoch=self.steps_per_epoch,
+                                       validation_steps=self.validation_steps,
+                                       validation_data=self.test_dataset)
+
+        return model_history.history['loss'], model_history.history['val_loss']
+
+    def evaluate(self):
+        predictions = []
+        for image, mask in self.dataset.take(1):
+            predictions.append(self.model.predict(image))
+
+        return predictions
+
+class VGG16(BaseModel):
+  def __init__(self):
+    super(LenetModel, self).__init__()
+
+    self.feature_extractor = FeatureExtractor(8, 3, 1, "valid", "relu", 2)
+
+    self.flatten = Flatten()
+
+    self.dense_1 = Dense(100, activation = "relu")
+    self.batch_1 = BatchNormalization()
+
+    self.dense_2 = Dense(10, activation = "relu")
+    self.batch_2 = BatchNormalization()
+
+    self.dense_3 = Dense(1, activation = "sigmoid")
+    
+  def call(self, x, training):
+
+    x = self.feature_extractor(x)
+    x = self.flatten(x)
+    x = self.dense_1(x)
+    x = self.batch_1(x)
+    x = self.dense_2(x)
+    x = self.batch_2(x)
+    x = self.dense_3(x)
+
+    return x
+    
+lenet_sub_classed = LenetModel()
+lenet_sub_classed(tf.zeros([1,224,224,3]))
+lenet_sub_classed.summary()
+
+'''
+
+"""
+class TransferModel:
+    """Instantiate a parent class for all transfer learning models"""
+
+    def __init__(self, config):
+        self.config = config.wandb.config
+
+    @staticmethod
+    def preprocess(x):
+        """Preprocess input for the relevant pretrained model
+        Args:
+        x
+        
+        Returns:
+        x after preprocessing
+        """
+        x = preproc_vgg16(x)
+        
+        return x
+    
+    def load_model(self):
+        
+        self.model = model
+        
+        return model
+
+    def set_nontrainable_layers(model):
+        
+        # Set the first layers to be untrainable
+        model.trainable = False
+            
+        return model
+    
+    def add_last_layers(model):
+        '''Take a pre-trained model, set its parameters as non-trainable, and add additional trainable layers on top'''
+        base_model = set_nontrainable_layers(model)
+        flatten_layer = layers.Flatten()
+        dense_layer = layers.Dense(500, activation='relu')
+        prediction_layer = layers.Dense(10, activation='sigmoid')
+        
+        model = models.Sequential([
+            base_model,
+            flatten_layer,
+            dense_layer,
+            prediction_layer
+        ])
+
+        return model
+    
+    def build_model():
+
+        model = load_model()
+        model = add_last_layers(model)
+        
+        model.compile(loss='binary_crossentropy',
+                    optimizer=optimizers.Adam(learning_rate=1e-4),
+                    metrics=['accuracy'])
+
+        return model
+
+class VGG16(TransferModel):
+    def __init__(self, config):
+        super().__init__(config)
+    
+    def load_model():
+        
+        model = VGG16(weights="imagenet", include_top=False, input_shape=(config.wandb.config['IM_SIZE'], config.wandb.config['IM_SIZE'], 3))
+        
+        return model
+
+"""
+
+# class BaseModel(ABC):
+#     '''Abstract Model class that is inherited to all models
+#     Behaviours:
+#     Get X and y
+#     Resize, load as array
+#     Preprocess input
+#     Get_config: hyperparameter tuning
+#     Model: baseline, VGG16, VGG19, ResNet, Inception, Xception
+#     Unfreeze layer
+#     Compile
+#     Fit
+#     Evaluate: accuracy, losses, classification report, confusion matrix
+#     Predict with different thresholds (0.5, mean, median)
+#     Save model
+#     Df to csv
+#     '''
+#     def __init__(self, config):
+#         self.config = config.wandb.config
+
+#     @abstractmethod
+#     def load_data(self):
+#          pass
+
+#     @abstractmethod
+#     def build(self):
+#         """model.compile
+#         """
+#         pass
+
+# class BaselineModel(BaseModel):
+#     def __init__(self, config):
+#         super().__init__(config)
+    
+#     def build(self):
+#         self.model = load_baseline_model()
+#         return self.model
+    
+# class VGG16Model(BaseModel):
+#     def __init__(self, config):
+#         super().__init__(config)
+    
+#     def build(self):
+#         model = load_model()
+#         model = add_last_layers(model)
+        
+#         model.compile(loss='binary_crossentropy',
+#                     optimizer=optimizers.Adam(learning_rate=1e-4),
+#                     metrics=['accuracy'])
+#         return model
