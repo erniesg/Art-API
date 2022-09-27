@@ -26,6 +26,7 @@ image_local('creambackground.png')
 
 # Title of the main page
 #st.title("Data Storyteller Application")
+st.beta_set_page_config(layout="wide")
 Title= '<p style="font-family:Avenir;color:Black; font-size: 55px;">Art Analyzer</p>'
 st.markdown(Title, unsafe_allow_html=True)
 #st.set_page_config(page_title= 'Art Analyzer', page_icon=:art:

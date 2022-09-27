@@ -272,6 +272,8 @@ def image_local(image_file):
     )
 image_local('creambackground.png')
 
+st.beta_set_page_config(layout="wide")
+
 def app():
     """This application helps in running machine learning models without having to write explicit code
     by the user. It runs some basic models and let's the user select the color variables.
