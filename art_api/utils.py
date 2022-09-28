@@ -52,6 +52,19 @@ def load_data(df):
         y.shape
     return X, y
 
+def load_add(df):
+    '''generates X and y from expanded dataframe'''
+    imgs = []
+    for index, row in df.iterrows():
+        img_file = str(row["filename"])
+        image = Image.open(os.path.join(row["path"], img_file))   
+        imgs.append(np.array(image))
+        X = np.array(imgs)
+        X.shape
+        y = df.drop(columns=['filename', 'path'])
+        y.shape
+    return X, y
+
 def load_google():
     '''Loads images scraped from google and creates a list per class
     '''

@@ -1,7 +1,5 @@
 import pandas as pd
-from art_api import config, utils, preproc
-import wandb
-from wandb.keras import WandbCallback
+from art_api import config, data, utils, preproc
 import os
 from google.cloud import storage
 from IPython.display import Image
@@ -12,8 +10,6 @@ from tensorflow.keras.callbacks import EarlyStopping
 from tensorflow.keras import Sequential, layers, models
 from sklearn.model_selection import train_test_split
 import numpy as np
-from pathlib import Path
-from wandb.keras import WandbCallback
 from matplotlib import pyplot as plt
 from tensorflow.keras.applications.vgg16 import preprocess_input as preproc_vgg16
 from tensorflow.keras.applications.vgg16 import VGG16
@@ -21,7 +17,7 @@ from tensorflow.keras.applications.vgg19 import VGG19, preprocess_input as prepr
 from tensorflow.keras.applications.resnet50 import ResNet50
 from tensorflow.keras.applications.resnet import ResNet152, preprocess_input as preproc_resnet
 from tensorflow.keras.applications.resnet_v2 import ResNet152V2
-from tensorflow.keras.applications.inception_v3 import InceptionV3, preprocess_input as preproc_inception
+from tensorflow.keras.applications.inception_v3 import InceptionV3, preprocess_input as preproc_inceptionv3
 from tensorflow.keras.applications import InceptionResNetV2
 from tensorflow.keras.applications.inception_resnet_v2 import preprocess_input as preproc_inceptionv2
 from tensorflow.keras.applications import Xception
@@ -102,12 +98,6 @@ def load_baseline_model():
 
 # Define a bunch of models for transfer learning below
 
-def load_vgg16_model():
-        
-    model = VGG16(weights="imagenet", include_top=False, input_shape=(config.IM_SIZE, config.IM_SIZE, 3), classes=10)
-        
-    return model
-
 def set_nontrainable_layers(model):
     
     # Set the first layers to be untrainable
@@ -147,20 +137,84 @@ def build_model(model, X_train, X_val, X_test):
 
     if model == "baseline":
         model = load_baseline_model()
+        return model, model_name, X_train, X_val, X_test
+        
     if model == "vgg16":
-        model = load_vgg16_model()
+        model = VGG16(weights="imagenet", include_top=False, input_shape=(config.IM_SIZE, config.IM_SIZE, 3), classes=10)
         model = add_last_layers(model)
 
-        X_train = preproc_vgg16(X_train) 
-        X_val = preproc_vgg16(X_val)
-        X_test = preproc_vgg16(X_test)
+        vgg16_X_train = preproc_vgg16(X_train) 
+        vgg16_X_val = preproc_vgg16(X_val)
+        vgg16_X_test = preproc_vgg16(X_test)
+        return model, model_name, vgg16_X_train, vgg16_X_val, vgg16_X_test
 
+    if model == "vgg19":
+        model = VGG19(weights="imagenet", include_top=False, input_shape=(config.IM_SIZE, config.IM_SIZE, 3), classes=10)
+        model = add_last_layers(model)
+
+        vgg19_X_train = preproc_vgg19(X_train) 
+        vgg19_X_val = preproc_vgg19(X_val)
+        vgg19_X_test = preproc_vgg19(X_test)
+        return model, model_name, vgg19_X_train, vgg19_X_val, vgg19_X_test
+        
+    if model == "resnet50":
+        model = ResNet50(weights="imagenet", include_top=False, input_shape=(config.IM_SIZE, config.IM_SIZE, 3), classes=10)
+        model = add_last_layers(model)
+
+        resnet50_X_train = preproc_resnet(X_train) 
+        resnet50_X_val = preproc_resnet(X_val)
+        resnet50_X_test = preproc_resnet(X_test)
+        
+        return model, model_name, resnet50_X_train, resnet50_X_val, resnet50_X_test
+        
+    if model == "resnet152":
+        model = ResNet152(weights="imagenet", include_top=False, input_shape=(config.IM_SIZE, config.IM_SIZE, 3), classes=10)
+        model = add_last_layers(model)
+        
+        return model, model_name, X_train, X_val, X_test
+        
+    if model == "resnet152v2":
+        model = ResNet152V2(weights="imagenet", include_top=False, input_shape=(config.IM_SIZE, config.IM_SIZE, 3), classes=10)
+        model = add_last_layers(model)
+        
+        return model, model_name, X_train, X_val, X_test
+
+    if model == "inceptionv2":
+        model = InceptionResNetV2(weights="imagenet", include_top=False, input_shape=(config.IM_SIZE, config.IM_SIZE, 3), classes=10)
+        model = add_last_layers(model)
+
+        inceptionv2_X_train = preproc_inceptionv2(X_train) 
+        inceptionv2_X_val = preproc_inceptionv2(X_val)
+        inceptionv2_X_test = preproc_inceptionv2(X_test)
+        
+        return model, model_name, inceptionv2_X_train, inceptionv2_X_val, inceptionv2_X_test
+        
+    if model == "inceptionv3":
+        model = InceptionV3(weights="imagenet", include_top=False, input_shape=(config.IM_SIZE, config.IM_SIZE, 3), classes=10)
+        model = add_last_layers(model)
+
+        inceptionv3_X_train = preproc_inceptionv3(X_train) 
+        inceptionv3_X_val = preproc_inceptionv3(X_val)
+        inceptionv3_X_test = preproc_inceptionv3(X_test)
+        
+        return model, model_name, inceptionv3_X_train, inceptionv3_X_val, inceptionv3_X_test
+        
+    if model == "xception":
+        model = Xception(weights="imagenet", include_top=False, input_shape=(config.IM_SIZE, config.IM_SIZE, 3), classes=10)
+        model = add_last_layers(model)
+
+        xception_X_train = preproc_xception(X_train) 
+        xception_X_val = preproc_xception(X_val)
+        xception_X_test = preproc_xception(X_test)
+        
+        return model, model_name, xception_X_train, xception_X_val, xception_X_test                                                  
+
+def fit_model(model, model_name, X_train, X_val, X_test):
     print(f'Model {model_name} loaded')
     
     model.compile(loss='binary_crossentropy',
                   optimizer=optimizers.Adam(learning_rate=1e-4),
                   metrics=['accuracy'])
-    
     model.summary()
 
     es = EarlyStopping(monitor = 'val_accuracy', 
@@ -202,16 +256,19 @@ def print_confusion_matrix(confusion_matrix, axes, class_label, class_names, fon
     heatmap.xaxis.set_ticklabels(heatmap.xaxis.get_ticklabels(), rotation=45, ha='right', fontsize=fontsize)
     axes.set_ylabel('True label')
     axes.set_xlabel('Predicted label')
-    axes.set_title("CM for - " + class_label)
+    axes.set_title(class_label)
     
-def evaluate(model, model_name, test):
+def evaluate(model, model_name, X_test, y_test):
     """
         E.g. model, y_pred = evaluate(model, model_name, X_test)
     """
-    res = model.evaluate(test, y_test)
+    res = model.evaluate(X_test, y_test)
     res
     test_accuracy = res[-1]
     print(f"test_accuracy = {round(test_accuracy,2)*100} %")
+    
+    pd.DataFrame(res).to_csv(f"../raw_data/models/{model_name}/res.csv")
+
     print(history.history.keys())
     # summarize history for accuracy
     plt.plot(history.history['accuracy'])
@@ -232,10 +289,10 @@ def evaluate(model, model_name, test):
     plt.legend(['train', 'test'], loc='upper left')
     plt.savefig('../raw_data/models/' + str(model_name) + '/' + 'loss.png')
     plt.show()
-    y_pred = model.predict(test)
-    return model, y_pred
+    y_pred = model.predict(X_test)
+    return model, y_pred, y_test
     
-def generate_reports(model, model_name, y_pred):
+def generate_reports(model, model_name, y_pred, y_test):
     """
     Args:
         e.g. generate_reports(model, model_name, y_pred)
@@ -249,7 +306,7 @@ def generate_reports(model, model_name, y_pred):
         classification_df = pd.DataFrame(list(report.items()),columns = ['class','scores']) 
         classification_df.to_csv(f"../raw_data/models/{model_name}/classification_report_{i}.csv")
         predictions_df = pd.DataFrame(predictions)
-        predictions_df.columns = ['aeroplane', 'bird', 'boat', 'chair', 'cow', 'diningtable', 'dog', 'horse', 'sheep', 'train']
+        predictions_df.columns = config.CLASSES
         print(predictions_df.sum())
         y_true = np.array(y_test)
         mcm = multilabel_confusion_matrix(y_true, predictions) 
@@ -273,7 +330,13 @@ if __name__ == "__main__":
     print(y.shape)
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3)
     X_test, X_val, y_test, y_val = train_test_split(X_test, y_test, test_size=0.5)
-    
+    print(f"the shape of X_train is {X_train.shape}")
+    print(f"the shape of X_val is {X_val.shape}")
+    print(f"the shape of X_test is {X_test.shape}")
+    print(f"the shape of y_train is {y_train.shape}")
+    print(f"the shape of y_val is {y_val.shape}")
+    print(f"the shape of y_test is {y_test.shape}")
+
     print("\n\nMake sure we're using GPU\n\n")
     
     try:
@@ -288,12 +351,68 @@ if __name__ == "__main__":
     
     print("\n\nRun baseline model\n\n")
     
-    model, model_name, X_test, history = build_model("baseline", X_train, X_val, X_test)
-    model, y_pred = evaluate(model, model_name, X_test)
+    model, model_name, X_train, X_val, X_test = build_model("baseline", X_train, X_val, X_test)
+    print(f"the shape of X_test after build_model is {X_test.shape}")
+    print(f"the shape of y_test after build_model is {y_test.shape}")
+
+    model, model_name, X_test, history = fit_model(model, model_name, X_train, X_val, X_test)
+    print(f"the shape of X_test after fit_model is {X_test.shape}")
+    print(f"the shape of y_test after fit_model is {y_test.shape}")
+    model, y_pred = evaluate(model, model_name, X_test, y_test)
     generate_reports(model, model_name, y_pred)
     
     print("\n\nRun VGG16 model\n\n")
     
-    model, model_name, X_test, history = build_model("vgg16", X_train, X_val, X_test)
-    model, y_pred = evaluate(model, model_name, X_test)
+    model, model_name, vgg16_X_train, vgg16_X_val, vgg16X_test = build_model("vgg16", X_train, X_val, X_test)
+    model, model_name, vgg16_X_test, history = fit_model(model, model_name, vgg16_X_train, vgg16_X_val, vgg16X_test)
+    model, y_pred = evaluate(model, model_name, vgg16_X_test, y_test)
+    generate_reports(model, model_name, y_pred)
+
+    print("\n\nRun VGG19 model\n\n")
+    
+    model, model_name, vgg19_X_train, vgg19_X_val, vgg19_X_test = build_model("vgg19", X_train, X_val, X_test)
+    model, model_name, vgg19_X_test, history = fit_model(model, model_name, vgg19_X_train, vgg19_X_val, vgg19_X_test)
+    model, y_pred = evaluate(model, model_name, vgg19_X_test, y_test)
+    generate_reports(model, model_name, y_pred)
+    
+    print("\n\nRun ResNet50 model\n\n")
+    
+    model, model_name, resnet50_X_train, resnet50_X_val, resnet50_X_test = build_model("resnet50", X_train, X_val, X_test)
+    model, model_name, resnet50_X_test, history = fit_model(model, model_name, resnet50_X_train, resnet50_X_val, resnet50_X_test)
+    model, y_pred = evaluate(model, model_name, resnet50_X_test, y_test)
+    generate_reports(model, model_name, y_pred)
+    
+    print("\n\nRun ResNet152 model\n\n")
+    
+    model, model_name, resnet50_X_train, resnet50_X_val, resnet50_X_test = build_model("resnet152", resnet50_X_train, resnet50_X_val, resnet50_X_test)
+    model, model_name, resnet50_X_test, history = fit_model(model, model_name, resnet50_X_train, resnet50_X_val, resnet50_X_test)
+    model, y_pred = evaluate(model, model_name, resnet50_X_test, y_test)
+    generate_reports(model, model_name, y_pred)
+
+    print("\n\nRun ResNet152V2 model\n\n")
+    
+    model, model_name, resnet50_X_train, resnet50_X_val, resnet50_X_test = build_model("resnet152v2", resnet50_X_train, resnet50_X_val, resnet50_X_test)
+    model, model_name, resnet50_X_test, history = fit_model(model, model_name, resnet50_X_train, resnet50_X_val, resnet50_X_test)
+    model, y_pred = evaluate(model, model_name, resnet50_X_test, y_test)
+    generate_reports(model, model_name, y_pred)
+
+    print("\n\nRun InceptionResNetV2 model\n\n")
+    
+    model, model_name, inceptionv2_X_train, inceptionv2_X_val, inceptionv2_X_test = build_model("inceptionv2", X_train, X_val, X_test)
+    model, model_name, inceptionv2_X_test, history = fit_model(model, model_name, inceptionv2_X_train, inceptionv2_X_val, inceptionv2_X_test)
+    model, y_pred = evaluate(model, model_name, inceptionv2_X_test, y_test)
+    generate_reports(model, model_name, y_pred)
+
+    print("\n\nRun InceptionV3 model\n\n")
+    
+    model, model_name, inceptionv3_X_train, inceptionv3_X_val, inceptionv3_X_test = build_model("inceptionv3", X_train, X_val, X_test)
+    model, model_name, inceptionv3_X_test, history = fit_model(model, model_name, inceptionv3_X_train, inceptionv3_X_val, inceptionv3_X_test)
+    model, y_pred = evaluate(model, model_name, inceptionv3_X_test, y_test)
+    generate_reports(model, model_name, y_pred)
+
+    print("\n\nRun Xception model\n\n")
+    
+    model, model_name, xception_X_train, xception_X_val, xception_X_test = build_model("xception", X_train, X_val, X_test)
+    model, model_name, xception_X_test, history = fit_model(model, model_name, xception_X_train, xception_X_val, xception_X_test)
+    model, y_pred = evaluate(model, model_name, xception_X_test, y_test)
     generate_reports(model, model_name, y_pred)
