@@ -19,10 +19,11 @@ PATH_FILE = Path(PATH_YOURPAINTINGS/"df_yourpaintings.csv")
 PATH_FILE.parent.mkdir(parents=True, exist_ok=True)
 TARGET_SIZE = (256, 256)
 INTERPOLATION = "bilinear"
-CLASSES = ["aeroplane", "bird", "boat", "chair", "cow", "diningtable", "dog", "horse", "sheep", "train"]
+CLASSES = ["aeroplane", "bird", "boat", "chair", "cow", "diningtable", "dog", "horse", "sheep", "train", "building", "figure"]
 PATH_BING = PATH/"bing"
 PATH_USERS = "../raw_data/users"
-IM_SIZE = 256
+IM_SIZE = 224
+NUM_CLASSES = len(CLASSES)
 
 '''Training parameters below'''
 wandb.config = {

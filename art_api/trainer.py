@@ -1,13 +1,12 @@
 import pandas as pd
-from art_api import config, data, utils, preproc
+from art_api import config, utils, preproc
 import os
-from google.cloud import storage
 from IPython.display import Image
 import tensorflow as tf
+from tensorflow.keras import Input, Model, Sequential, layers, models
 from tensorflow.keras.layers.experimental.preprocessing import Rescaling
 from tensorflow.keras import optimizers
 from tensorflow.keras.callbacks import EarlyStopping
-from tensorflow.keras import Sequential, layers, models
 from sklearn.model_selection import train_test_split
 import numpy as np
 from matplotlib import pyplot as plt
@@ -96,6 +95,29 @@ def load_baseline_model():
     
     return model
 
+def load_resnet152_func():
+    base_model = ResNet152(weights='imagenet',
+                           input_shape=(config.IM_SIZE, config.IM_SIZE, 3),
+                           include_top=False) 
+    base_model.trainable = False
+    
+    inputs = Input(shape=(config.IM_SIZE, config.IM_SIZE, 3))
+    
+    x = layers.RandomFlip()(inputs)
+    x = layers.RandomRotation(0.1)(x)
+    x = layers.RandomZoom(0.1)(x)
+    x = layers.RandomTranslation(height_factor=0.1, width_factor=0.1)(x)
+
+    x = base_model(inputs, training=False)
+    x = layers.MaxPooling2D(3)(x)
+    x = layers.Flatten()(x)
+    x = layers.Dense(500, activation="relu")(x)
+    outputs = layers.Dense(config.NUM_CLASSES, activation="sigmoid")(x)
+    
+    model = Model(inputs=inputs, outputs=outputs)
+    
+    return model
+
 # Define a bunch of models for transfer learning below
 
 def set_nontrainable_layers(model):
@@ -168,10 +190,14 @@ def build_model(model, X_train, X_val, X_test):
         return model, model_name, resnet50_X_train, resnet50_X_val, resnet50_X_test
         
     if model == "resnet152":
-        model = ResNet152(weights="imagenet", include_top=False, input_shape=(config.IM_SIZE, config.IM_SIZE, 3), classes=10)
+        model = ResNet152(weights="imagenet", include_top=False, input_shape=(config.IM_SIZE, config.IM_SIZE, 3), classes=config.NUM_CLASSES)
         model = add_last_layers(model)
         
-        return model, model_name, X_train, X_val, X_test
+        resnet50_X_train = preproc_resnet(X_train) 
+        resnet50_X_val = preproc_resnet(X_val)
+        resnet50_X_test = preproc_resnet(X_test)
+        
+        return model, model_name, resnet50_X_train, resnet50_X_val, resnet50_X_test
         
     if model == "resnet152v2":
         model = ResNet152V2(weights="imagenet", include_top=False, input_shape=(config.IM_SIZE, config.IM_SIZE, 3), classes=10)
@@ -207,12 +233,20 @@ def build_model(model, X_train, X_val, X_test):
         xception_X_val = preproc_xception(X_val)
         xception_X_test = preproc_xception(X_test)
         
-        return model, model_name, xception_X_train, xception_X_val, xception_X_test                                                  
+        return model, model_name, xception_X_train, xception_X_val, xception_X_test   
+
+    if model == "new_resnet152":
+        model = ResNet152(weights="imagenet", include_top=False, input_shape=(config.IM_SIZE, config.IM_SIZE, 3), classes=config.NUM_CLASSES)
+        model = add_last_layers(model)
+        
+        resnet50_X_train = preproc_resnet(X_train) 
+        resnet50_X_val = preproc_resnet(X_val)
+        resnet50_X_test = preproc_resnet(X_test)                                               
 
 def fit_model(model, model_name, X_train, X_val, X_test):
     print(f'Model {model_name} loaded')
     
-    model.compile(loss='binary_crossentropy',
+    model.compile(loss=tf.keras.losses.BinaryCrossentropy(from_logits=True),
                   optimizer=optimizers.Adam(learning_rate=1e-4),
                   metrics=['accuracy'])
     model.summary()

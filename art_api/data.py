@@ -55,6 +55,8 @@ class DataLoader:
                 df_add.at[index, "bird"] = 1
             if "boat" in row["filename"]:
                 df_add.at[index, "boat"] = 1
+            if "building" in row["filename"]:
+                df_add.at[index, "building"] = 1
             if "chair" in row["filename"]:
                 df_add.at[index, "chair"] = 1
             if "cow" in row["filename"]:
@@ -63,6 +65,8 @@ class DataLoader:
                 df_add.at[index, "diningtable"] = 1
             if "dog" in row["filename"]:
                 df_add.at[index, "dog"] = 1        
+            if "figure" in row["filename"]:
+                df_add.at[index, "figure"] = 1      
             if "horse" in row["filename"]:
                 df_add.at[index, "horse"] = 1        
             if "sheep" in row["filename"]:
@@ -72,8 +76,8 @@ class DataLoader:
 
         df_add = df_add.drop(columns=["index", "Image URL", "Web page URL", "Subset", "Labels", "labels"])
         df_add = df_add.replace(np.nan,0)
-        df_add = df_add.astype({"aeroplane":"int", "bird":"int", "boat":"int", "chair":"int",
-                                "cow":"int", "diningtable":"int", "dog":"int", "horse":"int",
+        df_add = df_add.astype({"aeroplane":"int", "bird":"int", "boat":"int", "building":"int", "chair":"int",
+                                "cow":"int", "diningtable":"int", "dog":"int", "figure":"int", "horse":"int",
                                 "sheep":"int", "train":"int"})
 
         return df_add
