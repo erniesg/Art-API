@@ -25,7 +25,9 @@ heroku_create_app:
 deploy_heroku:
 	-@git push heroku master
 	-@heroku ps:scale web=1
-
+	
+run_api:
+	uvicorn api.fast:app --reload
 # ----------------------------------
 #    LOCAL INSTALL COMMANDS
 # ----------------------------------
