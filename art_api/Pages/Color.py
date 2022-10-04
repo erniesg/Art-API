@@ -101,7 +101,7 @@ def hex2lab(column_hexcolor):
 #from PIL import Image
 
 def match_image_by_color(color, threshold, rows_to_chk, columns_to_chk): #num_pic_col
-    img_colors_df = pd.read_csv('df_10K_copy.csv')
+    img_colors_df = pd.read_csv('../raw_data/df_10K_copy.csv')
     #img_colors_df = app()
     #* Selected_color_ is user's chosen color for search
     selected_color_name = color
@@ -137,7 +137,7 @@ def match_image_by_color(color, threshold, rows_to_chk, columns_to_chk): #num_pi
                     print(f'\nimage_id = {image_id}')
                     if row_img_shown == False:
                         #Show the image
-                        image_path = f'/Users/plst/code/supersuzie/ArtWebsite/aws10K/{image_id}.jpg'
+                        image_path = f'/home/erniesg/code/erniesg/art_api/raw_data/aws10k/{image_id}.jpg'
                         # creating a object
                         # im = Image.open(image_path)
 
