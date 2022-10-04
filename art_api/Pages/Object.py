@@ -66,9 +66,11 @@ def RGB2HEX(options):
 OBJECT = {
     'aeroplane':'aeroplane',
     'bird':'bird',
+    'building':'building',
     'boat':'boat',
     'chair':'chair',
     'cow':'cow',
+    'figure':'figure',
     'table':'diningtable',
     'dog':'dog',
     'horse':'horse',
@@ -99,7 +101,7 @@ OBJECT = {
 #from PIL import Image
 
 def match_image_by_obj(object, rows_to_chk, columns_to_chk): #num_pic_col
-    img_obj_df = pd.read_csv(('df_pred_0.5.csv'), index_col=0)
+    img_obj_df = pd.read_csv(('../raw_data/12_classes_df_pred_0.5.csv'), index_col=0)
     #img_colors_df = app()
     #* Selected_color_ is user's chosen color for search
     selected_obj_name = object
