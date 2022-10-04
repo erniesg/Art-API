@@ -44,30 +44,13 @@ def get_image(image_path):
 def RGB2HEX(options):
     return "#{:02x}{:02x}{:02x}".format(int(options[0]), int(options[1]), int(options[2]))
 
-# Part 2: Image Search by color
-# - Define search parameters - 7 colors of rainbow
-# - User will pick search color, as input to be searched against the pre-generated DF of # image colors
-# -[Search uses delta_CIE76 color difference to return colors within a specified threshold]
-
-
-#*** RAINBOW COLOR DICTIONARY REFERENCE
-# COLORS = {
-#     'VIOLET': [148, 0, 211], #Hex #9400D3
-#     'INDIGO': [75, 0, 130], #Hex #4B0082
-#     'BLUE': [0, 0, 255],  # Hex #0000FF THRESHOLD [70?]
-#     'GREEN': [0, 128, 0], # Hex #008000, THRESHOLD [65]
-#     'YELLOW': [255, 255, 0], # Hex #FFFF00
-#     'ORANGE': [255, 127, 0], # Hex #FF7F00
-#     'RED': [255, 0, 0] # Hex #FF0000
-# }
-
 
 
 OBJECT = {
     'aeroplane':'aeroplane',
     'bird':'bird',
-    'building':'building',
     'boat':'boat',
+    'building':'building',
     'chair':'chair',
     'cow':'cow',
     'figure':'figure',
@@ -75,52 +58,24 @@ OBJECT = {
     'dog':'dog',
     'horse':'horse',
     'sheep':'sheep',
-    'train':'train'
+    'train':'train',
+    'figure': 'figure',
+    'building': 'building'
 
 }
 
-#*** WORKING function to convert hex to RGB: webcolors
-# then RGB to lab
-# >>> hex_to_rgb('#000080')
-# (0, 0, 128)
-# >>> rgb_to_hex((255, 255, 255))
-# '#FFFFFF'
-#  pip install webcolors
-# import webcolors
-# def hex2lab(column_hexcolor):
-#     column_RGBcolor = webcolors.hex_to_rgb(column_hexcolor)
-#     print(column_RGBcolor)
-#     # column_LABcolor = rgb2lab(np.uint8(np.asarray([[image_colors[i]]])))
-#     column_LABcolor = rgb2lab(np.uint8(np.asarray([[column_RGBcolor]])))
-#     print(column_LABcolor)
-#     return column_LABcolor
-
-#*** WORKING *** TEST 3 (NO PRINTS)
-#* incorporate column loop direct - reduce loops
-# importing Image class from PIL package
-#from PIL import Image
 
 def match_image_by_obj(object, rows_to_chk, columns_to_chk): #num_pic_col
     img_obj_df = pd.read_csv(('../raw_data/12_classes_df_pred_0.5.csv'), index_col=0)
     #img_colors_df = app()
     #* Selected_color_ is user's chosen color for search
     selected_obj_name = object
-    st.write(f'selected_object_name = {selected_obj_name}')
-    #selected_color_lab = rgb2lab(np.uint8(np.asarray([[color]]))) #* input color by user
-    #print(f'selected_color_lab= {selected_color_lab}\n')
-    #iterate over rows in img_color_df:
+    #st.write(f'selected_object_name = {selected_obj_name}')
+
 
     filtered = []
     caption = []
 
-    #if img_obj_df.loc[img_obj_df[f'{object}']==1]:
-    #for col in a:
-#if col == selected_obj_name:
-    #column_name_obj= img_obj_df.columns.tolist()
-    #for i in column_name_obj
-
-
-    #st.write(column_name_obj)
     for row in range(rows_to_chk):
         #st.write(f'\nRow_num = {row}')
         row_img_shown = False  #denotes whether row image shown b4. reset to false for each new row.
@@ -128,21 +83,18 @@ def match_image_by_obj(object, rows_to_chk, columns_to_chk): #num_pic_col
             print(f'\nRow, Column_num = {row},{column}')
             #f = lambda x: True if x==1 else False
             column_obj= img_obj_df.loc[row][column+1]
-            #img_obj_df[selected_obj_name]#img_obj_df.loc[row][column]#*use column+1 to skip ID column
-            #st.write(column_name_obj)#print(f'Column_hexcolor = {column_hexcolor}')
+
             select_image_id = False
-
-            #if '1' in img_obj_df.object.values == True:
-
-
-
-               #if col_name== selected_obj_name:
 
             a = img_obj_df.loc[img_obj_df[f'{object}'] == 1, 'filename']
             df = a.to_frame(name='filename')
             #st.write(df['filename'])
 
+
+
+
             #a.reset_index(inplace=True, drop=True)
+    #print(df.head(20))
     for i in df['filename']:
         image_path = f'/home/erniesg/code/erniesg/art_api/raw_data/aws10k/{i}'
         #st.write(image_path)
@@ -219,7 +171,7 @@ def match_image_by_obj(object, rows_to_chk, columns_to_chk): #num_pic_col
 
             cap = image_path.split('/')[-1].split('.')[0]
 
-            caption.append(f'Accession Number: {cap} \n(Artist) \n(Artname)\n(Year)')
+            caption.append(f'Accession Number: {cap}') #<br><br>(Artist) <br><br>(Artname) <br><br>(Year)
 
             filtered.append(im)
 
@@ -240,23 +192,9 @@ def match_image_by_obj(object, rows_to_chk, columns_to_chk): #num_pic_col
     for  filteredImage, cap in zip(filtered, caption):
         next(cols).image(filteredImage, width=250, caption=cap, use_column_width=auto)
 
-                        #for i in filtered:
-                                #cols = st.columns(2)
-                                #cols[0].image(im, caption= f'{image_id}.jpg',use_column_width=True)
-                                #cols[1].image(im, caption= f'{image_id}.jpg',use_column_width=True)
-                                # cols[2].image(im, caption= f'{image_id}.jpg')
 
 
 
-
-
-
-
-                        #display(im)
-
-                        # row_img_shown = True #once row img shown at least once b4 no need to show again.
-                #print(f'select_image = {select_image_id}')
-                #return select_image_id
 
 def image_local(image_file):
     with open(image_file, "rb") as image_file:
@@ -274,7 +212,6 @@ def image_local(image_file):
     )
 image_local('creambackground.png')
 
-st.beta_set_page_config(layout="wide")
 
 def app():
     """This application helps in running machine learning models without having to write explicit code
@@ -282,10 +219,9 @@ def app():
         """
 
         # Load the data
-        # if 'main_data.csv' not in os.listdir('data'):
-        #     st.markdown("Please upload data through `Upload Data` page!")
 
-    img_obj_df = pd.read_csv(('df_pred_0.5.csv'),index_col=0)
+
+    img_obj_df = pd.read_csv(('../raw_data/12_classes_df_pred_0.5.csv'),index_col=0)
 
     #adding a color selectbox
 
@@ -293,7 +229,7 @@ def app():
 
     object = st.multiselect(
         'Select Object',
-        ['aeroplane','bird','boat','chair','cow','table','dog','horse','sheep','train'])
+        ['aeroplane','bird','boat','chair','cow','table','dog','horse','sheep','train', 'figure', 'building']) #figure, building
     #st.sidebar.button('Run')
     st.write(f"Object to be predicted:{object}")
 

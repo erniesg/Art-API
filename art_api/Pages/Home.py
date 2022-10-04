@@ -30,11 +30,19 @@ def app():
     #Title= '<p style="font-family:Futura; color:Grey; font-size: 55px;">Welcome to Art Analyzer!</p>'
     #st.markdown(Title, unsafe_allow_html=True)
 
-    Hello_Title= '<p style="font-family:Avenir; color:Black; font-size: 46px;">Hello, Welcome to Art Analyzer!</p>'
+    #Hello_Title= '<p style="font-family:Avenir; color:Brown; font-size: 40px;">Hello, Welcome to Art Analyzer!</p>'
+    Welcome_Title= '<p style="font-family:Avenir; color:rgb(180, 23, 26); font-size: 20px;">Welcome!</p>'
+    st.markdown(Welcome_Title, unsafe_allow_html=True)
+
+
+    Hello_Title= '<p style="font-family:Avenir; color:rgb(180, 23, 26); font-size: 20px;">Beyond its literal tech-connectivity meaning, encapsulating a hope of facilitating greater accessibility to Art for all.<br><br>Through this project, with the permission of the National Gallery of Singapore (NGS) we aim to enhance the search capabilities of its Collection to include more intuitive searches - by object and colour.<br><br>Enjoy.</p>'
+    # Hello_Title= '<p style="font-family:Avenir; color:rgb(180, 23, 30); font-size: 20px;">This project aims to improve art galleries search function and reduce manual labelling by using Machine Learning to predict artwork based on user\'s objects and/or colors search input.</p>'
+
     st.markdown(Hello_Title, unsafe_allow_html=True)
-    st.write("""
-     This app predicts artwork based on the objects and colors selected.
-     """)
+
+    # st.write("""
+    #  This app predicts artwork based on the objects and colors selected.
+    #  """)
 
 
 
