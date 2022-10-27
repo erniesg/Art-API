@@ -59,7 +59,7 @@ OBJECT = {
     'horse':'horse',
     'sheep':'sheep',
     'train':'train',
-    'figure': 'figure',
+    'people': 'figure',
     'building': 'building'
 
 }
@@ -229,7 +229,7 @@ def app():
 
     object = st.multiselect(
         'Select Object',
-        ['aeroplane','bird','boat','chair','cow','table','dog','horse','sheep','train', 'figure', 'building']) #figure, building
+        ['aeroplane','bird','boat','chair','cow','table','dog','horse','sheep','train', 'people', 'building']) #figure, building
     #st.sidebar.button('Run')
     st.write(f"Object to be predicted:{object}")
 
