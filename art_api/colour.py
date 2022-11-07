@@ -5,7 +5,7 @@ import joblib
 import os
 import streamlit as st
 from itertools import cycle
-
+from yellowbrick.cluster import KElbowVisualizer
 from sklearn.cluster import KMeans
 import matplotlib.pyplot as plt
 import numpy as np
@@ -99,6 +99,54 @@ def hex2lab(column_hexcolor):
 #* incorporate column loop direct - reduce loops
 # importing Image class from PIL package
 #from PIL import Image
+
+def get_colors(image, number_of_colors, show_chart):
+    
+    #modified_image = cv2.resize(image, (600, 400), interpolation = cv2.INTER_AREA)
+    modified_image = image.reshape(image.shape[0]*image.shape[1], 3)
+    
+    clf = KMeans(n_clusters = number_of_colors)
+    labels = clf.fit_predict(modified_image)
+    
+    counts = Counter(labels)
+    # sort to ensure correct color percentage
+    counts = dict(sorted(counts.items()))
+    
+    center_colors = clf.cluster_centers_
+    # We get ordered colors by iterating through the keys
+    ordered_colors = [center_colors[i] for i in counts.keys()]
+    hex_colors = [RGB2HEX(ordered_colors[i]) for i in counts.keys()]
+    #hex_colors = pd.DataFrame([RGB2HEX(ordered_colors[i]) for i in counts.keys()]).T
+    #rgb_colors = [ordered_colors[i] for i in counts.keys()]
+
+    if (show_chart):
+        plt.figure(figsize = (8, 6))
+        plt.pie(counts.values(), labels = hex_colors, colors = hex_colors)
+    
+    # return rgb_colors
+    print(counts.values())
+    print(hex_colors)
+    X = clf.cluster_centers_
+    y = counts.values()
+    return hex_colors, X, y
+
+def get_dom_colours(filename):
+    hex_colors, X, y = get_colors(get_image(filename), 12, True)
+    model = KMeans()
+    visualizer = KElbowVisualizer(model, k=(3,12))
+    hex_colors, X, y = get_colors(get_image(filename), visualizer.elbow_value_, True)
+    return filename, hex_colors
+
+def add_to_df():
+    fname = os.path.basename(filename).split('.', 1)[0]
+    data = {}
+    data['id'] = fname
+    for i in range(len(hex_colors)):
+        data[str(i)] = hex_colors[i]
+    df = pd.read_csv('../raw_data/df_10K_copy.csv')
+    df = df.copy()
+    new_df = pd.concat([df, data_df])
+    return df
 
 def match_image_by_color(color, threshold, rows_to_chk, columns_to_chk): #num_pic_col
     img_colors_df = pd.read_csv('../raw_data/df_10K_copy.csv')

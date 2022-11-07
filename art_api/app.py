@@ -36,7 +36,7 @@ st.markdown(Title, unsafe_allow_html=True)
 
 # Add all your applications (pages) here
 app.add_page("Home", Home.app)
-#app.add_page("Predict", Predict.app)
+app.add_page("Predict", Predict.app)
 app.add_page("Object", Object.app)
 app.add_page("Color", Color.app)
 
