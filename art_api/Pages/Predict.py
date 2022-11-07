@@ -89,17 +89,27 @@ def app():
             # image = cv2.imread(image_path)
             # image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
             # return image
-            st.image("img.jpg", caption="Extracting colours for image", use_column_width=True)
+            col1, col2 = st.columns(2)
+
+            with col1:
+                st.header("Image to be treated")
+                st.image("img.jpg", caption="Extracting colours for image", use_column_width=True)
+
+
             image = cv2.imread("img.jpg")
             image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
             hex_colors, X, y = colour.get_colors(image, 5, True)
-            st.text(hex_colors)
-            st.text(y)
-            fig1, ax1 = plt.subplots()
+
+            fig1, ax1 = plt.subplots(figsize=(8,6))
             ax1.pie(list(y), labels=hex_colors, colors = hex_colors)
+            with col2:
+                st.header("Colours extracted")
+                st.pyplot(fig1)
+                st.text(hex_colors)
+                st.text(y)
             # ax1.axis('equal')  # Equal aspect ratio ensures that pie is drawn as a circle.
             #plt.pie(list(y), labels = hex_colors, colors = hex_colors)
-            st.pyplot(fig1)
+            
             #plt.pie(counts.values(), labels = hex_colors, colors = hex_colors)
 
             #The plot
