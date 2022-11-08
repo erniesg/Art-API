@@ -3,7 +3,7 @@ import base64
 
 # Custom imports
 from multipage import MultiPage
-from Pages import Color, Home, Object # import your pages here
+from Pages import Color, Home, Object, Predict # import your pages here
 
 # Create an instance of the app
 st.set_page_config(layout="wide")
@@ -36,6 +36,7 @@ st.markdown(Title, unsafe_allow_html=True)
 
 # Add all your applications (pages) here
 app.add_page("Home", Home.app)
+#app.add_page("Predict", Predict.app)
 app.add_page("Object", Object.app)
 app.add_page("Color", Color.app)
 
