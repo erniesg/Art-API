@@ -59,7 +59,7 @@ OBJECT = {
     'horse':'horse',
     'sheep':'sheep',
     'train':'train',
-    'figure': 'figure',
+    'people': 'figure',
     'building': 'building'
 
 }
@@ -96,7 +96,7 @@ def match_image_by_obj(object, rows_to_chk, columns_to_chk): #num_pic_col
             #a.reset_index(inplace=True, drop=True)
     #print(df.head(20))
     for i in df['filename']:
-        image_path = f'/home/erniesg/code/erniesg/art_api/raw_data/aws10k/{i}'
+        image_path = f'../raw_data/aws10k/{i}'
         #st.write(image_path)
 
         #     st.write(image_path)
@@ -229,7 +229,7 @@ def app():
 
     object = st.multiselect(
         'Select Object',
-        ['aeroplane','bird','boat','chair','cow','table','dog','horse','sheep','train', 'figure', 'building']) #figure, building
+        ['aeroplane','bird','boat','chair','cow','table','dog','horse','sheep','train', 'people', 'building']) #figure, building
     #st.sidebar.button('Run')
     st.write(f"Object to be predicted:{object}")
 
