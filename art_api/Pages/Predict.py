@@ -15,18 +15,15 @@ import urllib
 from skimage import io
 import pdb
 from PIL import Image, ImageOps
-import webcolors
 import seaborn as sns
 import pandas as pd
-import base64
 import tensorflow as tf
-from tensorflow.keras.models import load_model
 from io import BytesIO
-from tensorflow.keras.applications.resnet import preprocess_input as preproc_resnet
-from tensorflow.keras import layers
 from art_api import colour
 from tensorflow.python.ops.numpy_ops import np_config
 import plotly.graph_objects as go
+from sklearn.cluster import KMeans
+from yellowbrick.cluster import KElbowVisualizer
 
 np_config.enable_numpy_behavior()
 
@@ -53,6 +50,19 @@ def load_image():
 #        img_array = np.array([np.array(Image.open(image_data).convert('RGB'))])
 #        print(f"Shape of uploaded image is {img_array.shape}")
 
+def optimal_cluster(X, y):
+    X, y = X, y
+
+    # Instantiate the clustering model and visualizer
+    model = KMeans()
+    visualizer = KElbowVisualizer(model, k=(3,12))
+
+    visualizer.fit(X)        # Fit the data to the visualizer
+    visualizer.show()        # Finalize and render the figure
+    elbow = visualizer.elbow_value_
+
+    return elbow
+
 def predict(image):
     #print(image.shape)
     #image = image.resize((256, 256), Image.ANTIALIAS)
@@ -61,6 +71,24 @@ def predict(image):
     image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
     colour.get_colors(image, 12, True)
     return hex_colors, X, y
+
+def add_to_collection(img_file_buffer, hex_colors):
+    data = {}
+    data['id'] = img_file_buffer.name.rstrip(".jpg")
+    for i in range(len(hex_colors)):
+        data[str(i)] = hex_colors[i]
+    len(hex_colors)
+    for i in hex_colors:
+        print(i)
+    data
+    df = pd.read_csv('../raw_data/df_10K_copy.csv')
+    df = df.copy()
+    data_df = pd.DataFrame([data])
+    new_df = pd.concat([df, data_df])
+    #new_df = new_df.drop(columns=['Unnamed: 0'])
+    new_df.to_csv('../raw_data/df_10K_copy.csv', index=False)
+    st.dataframe(data=new_df)
+    return new_df
 
 def app():
     img_file_buffer = st.file_uploader('Upload an image')
@@ -74,7 +102,7 @@ def app():
         st.write('Calculating results...')
         if img_file_buffer is not None:
             image = Image.open(img_file_buffer)
-            image = image.save("img.jpg")
+            image = image.save(f"../raw_data/aws10k/{img_file_buffer.name}")
 
             #img_array = np.array(image) # if you want to pass it to OpenCV
             #image_data = img_file_buffer.getvalue()
@@ -92,13 +120,15 @@ def app():
             col1, col2 = st.columns(2)
 
             with col1:
-                st.header("Image to be treated")
-                st.image("img.jpg", caption="Extracting colours for image", use_column_width=True)
+                st.header("Image to process")
+                st.image(f"../raw_data/aws10k/{img_file_buffer.name}", caption="Extracting colours for image", use_column_width=True)
 
 
-            image = cv2.imread("img.jpg")
+            image = cv2.imread(f"../raw_data/aws10k/{img_file_buffer.name}")
             image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
-            hex_colors, X, y = colour.get_colors(image, 5, True)
+            hex_colors, X, y = colour.get_colors(image, 12, True)
+            elbow = optimal_cluster(X, y)
+            hex_colors, X, y = colour.get_colors(image, elbow, True)
 
             fig1, ax1 = plt.subplots(figsize=(8,6))
             ax1.pie(list(y), labels=hex_colors, colors = hex_colors)
@@ -107,22 +137,10 @@ def app():
                 st.pyplot(fig1)
                 st.text(hex_colors)
                 st.text(y)
-            # ax1.axis('equal')  # Equal aspect ratio ensures that pie is drawn as a circle.
-            #plt.pie(list(y), labels = hex_colors, colors = hex_colors)
-            
-            #plt.pie(counts.values(), labels = hex_colors, colors = hex_colors)
-
-            #The plot
-            #colour.get_colors(colour.get_image(img), 12, True)
-        # if img_file_buffer is not None:
-        #     image_data = img_file_buffer.getvalue()
-        #     st.text(type(type(image_data)))
-        #     #st.text(type(image_data.shape))
-        #     image = Image.open(img_file_buffer)
-        #     img_array = np.array(image)
-        #     st.text(type(image))
-        #     #st.text(image.shape)
-        #     st.text(type(img_array))
-        #     st.text(img_array.shape)
-        #     predict(image_data)
-        # print(hex_colors)
+                add_to_collection(img_file_buffer, hex_colors)
+                st.text(f"Image {img_file_buffer.name} and its colours have been added to collection.")
+                # add = st.button('Add to collection')
+                # st.write(add)
+                # if add:
+                #     #add_to_collection(img_file_buffer, hex_colors)
+                #     st.text("Image and its colours have been added to collection.")

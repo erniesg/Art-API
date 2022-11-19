@@ -138,7 +138,7 @@ def match_image_by_color(color, threshold, rows_to_chk, columns_to_chk): #num_pi
                     print(f'\nimage_id = {image_id}')
                     if row_img_shown == False:
                         #Show the image
-                        image_path = f'/home/erniesg/code/erniesg/art_api/raw_data/aws10k/{image_id}.jpg'
+                        image_path = f'../raw_data/aws10k/{image_id}.jpg'
                         # creating a object
                         # im = Image.open(image_path)
 
@@ -231,7 +231,7 @@ def app():
         #choice = st.sidebar._selectbox("Menu", menu)
     #st.write(f"Color to be predicted:{color} again")
     if st.button("Go"):
-         match_image_by_color(COLORS[color[0]], THOLDS[color[0]], 4380, 6)
+         match_image_by_color(COLORS[color[0]], THOLDS[color[0]], len(img_colors_df), 6)
 
 
 
