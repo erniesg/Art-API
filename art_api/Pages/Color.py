@@ -72,7 +72,7 @@ THOLDS = {
     'VIOLET': [65], #9400D3, T65 **OK
     'INDIGO': [67], #4B0082, T67 **OK
     'BLUE': [126.1], #0000FF, T108 **OK
-    'GREEN': [63], #008000, T63 **OK
+    'GREEN': [58], #008000, T63 **OK; 63 originally
     'YELLOW': [78], #FFFF00, T78 **OK
     'ORANGE': [63], #FF7F00, T63 **OK
     'RED': [78], #FF0000, T78 **OK
@@ -141,12 +141,14 @@ def match_image_by_color(color, threshold, rows_to_chk, columns_to_chk): #num_pi
                         image_path = f'../raw_data/aws10k/{image_id}.jpg'
                         # creating a object
                         # im = Image.open(image_path)
+                        print(f'diff is < threshold and {image_path}')
 
                         try:
 
                             im = Image.open(image_path)
 
                             cap = image_path.split('/')[-1].split('.')[0]
+                            print(f'cap is {cap}')
 
                             caption.append(f'Accession Number: {cap}') #<br><br>Diff: {diff} <br><br>(Artist) <br><br>(Artname) <br><br>(Year)
 
