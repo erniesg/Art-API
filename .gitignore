@@ -77,3 +77,6 @@ notebooks/wandb/run-20220917_055917-2qxvmrhv/logs/debug.log
 notebooks/wandb/run-20220917_060822-1uajz5rx/logs/debug.log
 art_api/artworks_all.docarray
 art_api/artworks_small.docarray
+art_api/artworks_ngs_all.docarray
+.gitignore
+art_api/artworks_ngs_small.docarray
