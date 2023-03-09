@@ -101,11 +101,11 @@ def hex2lab(column_hexcolor):
 #from PIL import Image
 
 def match_image_by_color(color, threshold, rows_to_chk, columns_to_chk): #num_pic_col
-    img_colors_df = pd.read_csv('../raw_data/df_10K.csv')
+    img_colors_df = pd.read_csv('../raw_data/df_10K_copy.csv')
     #img_colors_df = app()
     #* Selected_color_ is user's chosen color for search
     selected_color_name = color
-    st.write(f'selected_color_name = {selected_color_name}')
+    #st.write(f'selected_color_name = {selected_color_name}')
     selected_color_lab = rgb2lab(np.uint8(np.asarray([[color]]))) #* input color by user
     #print(f'selected_color_lab= {selected_color_lab}\n')
     #iterate over rows in img_color_df:
@@ -128,6 +128,7 @@ def match_image_by_color(color, threshold, rows_to_chk, columns_to_chk): #num_pi
                 #st.write(f'Delta Diff= {diff}')
                 if (diff < threshold):
                     select_image_id = True
+                    img_colors_df.loc[row]['id']
                     #st.write(f'\nrow_img_shown = {row_img_shown}')
                     #st.write(f'\nimg_colors_df_row = {img_colors_df.loc[row]}')
                     image_id = img_colors_df.loc[row]['id']
@@ -137,7 +138,7 @@ def match_image_by_color(color, threshold, rows_to_chk, columns_to_chk): #num_pi
                     print(f'\nimage_id = {image_id}')
                     if row_img_shown == False:
                         #Show the image
-                        image_path = f'/home/erniesg/code/erniesg/art_api/raw_data/aws10k/{image_id}.jpg'
+                        image_path = f'../raw_data/aws10k/{image_id}.jpg'
                         # creating a object
                         # im = Image.open(image_path)
 
@@ -147,7 +148,7 @@ def match_image_by_color(color, threshold, rows_to_chk, columns_to_chk): #num_pi
 
                             cap = image_path.split('/')[-1].split('.')[0]
 
-                            caption.append(f'Accession Number: {cap} \nDiff: {diff}\n(Artist) \n(Artname)\n(Year)')
+                            caption.append(f'Accession Number: {cap}') #<br><br>Diff: {diff} <br><br>(Artist) <br><br>(Artname) <br><br>(Year)
 
                             filtered.append(im)
 
@@ -204,9 +205,6 @@ def image_local(image_file):
     )
 image_local('creambackground.png')
 
-#st.beta_set_page_config(layout="wide")
-#st.set_page_config(layout="wide")
-
 
 def app():
     """This application helps in running machine learning models without having to write explicit code
@@ -217,7 +215,7 @@ def app():
         # if 'main_data.csv' not in os.listdir('data'):
         #     st.markdown("Please upload data through `Upload Data` page!")
 
-    img_colors_df = pd.read_csv('../raw_data/df_10K.csv')
+    img_colors_df = pd.read_csv('../raw_data/df_10K_copy.csv')
 
     #adding a color selectbox
 
@@ -227,12 +225,13 @@ def app():
         'Select colors',
         ['RED','ORANGE','YELLOW','GREEN','BLUE', 'INDIGO', 'VIOLET'])
     #st.sidebar.button('Run')
+
     st.write(f"Color to be predicted:{color}")
 
         #choice = st.sidebar._selectbox("Menu", menu)
     #st.write(f"Color to be predicted:{color} again")
     if st.button("Go"):
-         match_image_by_color(COLORS[color[0]], THOLDS[color[0]], 4379, 6)
+         match_image_by_color(COLORS[color[0]], THOLDS[color[0]], len(img_colors_df), 6)
 
 
 
