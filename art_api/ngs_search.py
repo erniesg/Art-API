@@ -4,7 +4,6 @@ from docarray import dataclass
 from docarray import Document, DocumentArray
 from docarray.typing import Image, Text
 
-
 @dataclass
 class Artwork:
     image: Image
@@ -14,9 +13,7 @@ class Artwork:
     geo_reference: Text
     rights: Text
 
-
-image_folder = '../raw_data/aws10k_sm'
-
+image_folder = '../raw_data/ngs_search'
 
 def convert_to_docarray(filename):
     existing_images = os.listdir(image_folder)
@@ -39,14 +36,11 @@ def convert_to_docarray(filename):
                 doc = Document(artwork)
                 artworks.append(doc)
 
-    artworks.save_binary('artworks_ngs_all.docarray')
-    artworks[:20].save_binary('artworks_ngs_small.docarray')
-
+    artworks.save_binary('artworks_ngs_all_resize.docarray')
 
 def push_all():
-    da = DocumentArray.load_binary(f'artworks_ngs_all.docarray')
-    da.push(name='artworks_ngs_all')
+    da = DocumentArray.load_binary(f'artworks_ngs_all_resize.docarray')
+    da.push(name='artworks_ngs_all_resize')
 
-
-convert_to_docarray('../raw_data/csv/ngs_artplus.csv')
+convert_to_docarray('../raw_data/csv/ngs_search.csv')
 push_all()

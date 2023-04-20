@@ -80,3 +80,4 @@ art_api/artworks_small.docarray
 art_api/artworks_ngs_all.docarray
 .gitignore
 art_api/artworks_ngs_small.docarray
+art_api/artworks_ngs_all_resize.docarray
